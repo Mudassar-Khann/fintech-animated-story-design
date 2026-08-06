@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/onyx-3d-scroll-narrative/',
+  base: '/fintech-animated-story-design/',
   plugins: [react()],
   build: {
     rollupOptions: {

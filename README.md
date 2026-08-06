@@ -1,6 +1,6 @@
 # Onyx Financial Landing Page
 
-**Live Preview:** [https://Mudassar-Khann.github.io/onyx-3d-scroll-narrative/](https://Mudassar-Khann.github.io/onyx-3d-scroll-narrative/)
+**Live Preview:** [https://Mudassar-Khann.github.io/fintech-animated-story-design/](https://Mudassar-Khann.github.io/fintech-animated-story-design/)
 
 A high-performance, premium landing page designed for a modern fintech disruptor. This project eschews static imagery in favor of a continuous, hardware-accelerated 3D narrative that persists across the entire viewport as the user scrolls.
 
