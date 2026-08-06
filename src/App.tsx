@@ -183,19 +183,22 @@ const Scene3D = memo(() => {
   const layer1Ref = useRef<THREE.Mesh>(null); 
   const layer2Ref = useRef<THREE.Mesh>(null); 
   const layer3Ref = useRef<THREE.Group>(null);
+  const layer4Ref = useRef<THREE.Mesh>(null);
 
   useGSAP(() => {
     if (!layer1Ref.current || !layer2Ref.current || !layer3Ref.current || !groupRef.current) return;
 
     // Initial exploded state (Chaos)
-    gsap.set(layer1Ref.current.position, { z: -8, x: -5, y: 3 });
+    gsap.set(layer1Ref.current.position, { z: -8, x: -6, y: 4 });
     gsap.set(layer1Ref.current.rotation, { x: 1, y: 2 });
     
-    gsap.set(layer2Ref.current.position, { z: -2, x: 5, y: -4 });
-    gsap.set(layer2Ref.current.rotation, { x: -1, y: -1 });
+    gsap.set(layer4Ref.current.position, { z: 4, x: 8, y: -2 });
+    gsap.set(layer4Ref.current.rotation, { x: -0.5, y: -1.5 });
     
-    gsap.set(layer3Ref.current.position, { z: 6, x: 0, y: 6 });
-    gsap.set(layer3Ref.current.rotation, { x: 0.5, y: -0.5 });
+    gsap.set(layer2Ref.current.position, { z: -2, x: 2, y: -5 });
+    gsap.set(layer2Ref.current.rotation, { x: -1, y: 1 });
+    
+    gsap.set(layer3Ref.current.position, { z: 0, x: 0, y: 0 });
     
     gsap.set(groupRef.current.rotation, { y: Math.PI / 3, x: Math.PI / 6 });
     gsap.set(groupRef.current.position, { z: -5 });
@@ -211,17 +214,22 @@ const Scene3D = memo(() => {
     });
 
     // PHASE 1: Hero Convergence
-    tl.to([layer1Ref.current.position, layer2Ref.current.position, layer3Ref.current.position], {
-      x: 0, y: 0, z: (i) => (i === 0 ? 0 : 0.026),
-      duration: 1.5,
-      ease: "power2.inOut"
-    }, 0);
+    tl.to(layer1Ref.current.position, { x: -1.265, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" }, 0);
+    tl.to(layer4Ref.current.position, { x: 1.265, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" }, 0);
+    tl.to(layer2Ref.current.position, { x: -1.5, y: 0, z: 0.026, duration: 1.5, ease: "power2.inOut" }, 0);
     
-    tl.to([layer1Ref.current.rotation, layer2Ref.current.rotation, layer3Ref.current.rotation], {
+    tl.to([layer1Ref.current.rotation, layer4Ref.current.rotation, layer2Ref.current.rotation], {
       x: 0, y: 0, z: 0,
       duration: 1.5,
       ease: "power2.inOut"
     }, 0);
+
+    // TEXT REVEAL: Fades in exactly as they snap together
+    tl.to(layer3Ref.current.children.map(c => (c as any).material), {
+      opacity: 1,
+      duration: 0.5,
+      ease: "power2.inOut"
+    }, 1.5);
 
     tl.to(groupRef.current.position, {
       z: 0, y: 1.5, x: 0,
@@ -279,8 +287,19 @@ const Scene3D = memo(() => {
 
       <group ref={groupRef}>
         <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-          {/* Layer 1: Debit Card Body (Obsidian Matte + Clearcoat) */}
-          <RoundedBox ref={layer1Ref} args={[5.06, 3.18, 0.05]} radius={0.15} smoothness={4}>
+          {/* Layer 1: Left Half (Obsidian Matte + Clearcoat) */}
+          <RoundedBox ref={layer1Ref} args={[2.53, 3.18, 0.05]} radius={0.15} smoothness={4}>
+            <meshPhysicalMaterial 
+              color="#050505" 
+              metalness={0.9} 
+              roughness={0.1} 
+              clearcoat={1} 
+              clearcoatRoughness={0.1} 
+            />
+          </RoundedBox>
+
+          {/* Layer 4: Right Half (Obsidian Matte + Clearcoat) */}
+          <RoundedBox ref={layer4Ref} args={[2.53, 3.18, 0.05]} radius={0.15} smoothness={4}>
             <meshPhysicalMaterial 
               color="#050505" 
               metalness={0.9} 
@@ -298,23 +317,23 @@ const Scene3D = memo(() => {
           {/* Layer 3: Embossed Text & Details */}
           <group ref={layer3Ref}>
             {/* ONYX Logo */}
-            <Text position={[1.5, -0.9, 0.03]} fontSize={0.4} color="#ffffff" letterSpacing={0.3} fontStyle="italic" fontWeight="bold">
+            <Text position={[1.5, -0.9, 0.03]} fontSize={0.4} color="#ffffff" letterSpacing={0.3} fontStyle="italic" fontWeight="bold" fillOpacity={0}>
               ONYX
             </Text>
             {/* Card Number */}
-            <Text position={[-1.2, -0.2, 0.03]} fontSize={0.28} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9}>
+            <Text position={[-1.2, -0.2, 0.03]} fontSize={0.28} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9} fillOpacity={0}>
               4123 8900 5678 9012
             </Text>
             {/* Expiry */}
-            <Text position={[-0.8, -0.6, 0.03]} fontSize={0.12} color="#A0ABC0" letterSpacing={0.1}>
+            <Text position={[-0.8, -0.6, 0.03]} fontSize={0.12} color="#A0ABC0" letterSpacing={0.1} fillOpacity={0}>
               VALID THRU 12/28
             </Text>
             {/* Cardholder */}
-            <Text position={[-1.2, -0.9, 0.03]} fontSize={0.22} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9}>
+            <Text position={[-1.2, -0.9, 0.03]} fontSize={0.22} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9} fillOpacity={0}>
               ALEXANDER WRIGHT
             </Text>
             {/* Payment Network */}
-            <Text position={[1.6, 1.1, 0.03]} fontSize={0.35} color="#A0ABC0" fontStyle="italic" fontWeight="bold">
+            <Text position={[1.6, 1.1, 0.03]} fontSize={0.35} color="#A0ABC0" fontStyle="italic" fontWeight="bold" fillOpacity={0}>
               VISA
             </Text>
           </group>
