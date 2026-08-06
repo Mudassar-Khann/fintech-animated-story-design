@@ -12,7 +12,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Canvas } from '@react-three/fiber';
-import { Environment, Float, RoundedBox, Text, PerformanceMonitor } from '@react-three/drei';
+import { Environment, Float, RoundedBox, Text, PerformanceMonitor, Preload } from '@react-three/drei';
 import * as THREE from 'three';
 import { 
   CreditCard, 
@@ -284,7 +284,7 @@ const Scene3D = memo(() => {
     tl.to(groupRef.current.rotation, { y: 0, x: -0.4, z: 0, duration: 3, ease: "power1.inOut" }, 4.5);
 
     tl.to(groupRef.current.position, { y: 10, z: -10, duration: 2.5, ease: "power2.in" }, 7.5);
-  });
+  }, []);
   const blockMaterial = React.useMemo(() => new THREE.MeshPhysicalMaterial({
     color: "#050505",
     metalness: 0.9,
@@ -453,7 +453,7 @@ function App() {
     tl.to('.act-2-text', { opacity: 0, y: -50, duration: 0.2 }, 0.6);
     tl.to('.act-3-ui', { opacity: 1, y: 0, duration: 0.2 }, 0.8);
     
-  }, { scope: container });
+  }, { scope: container, dependencies: [] });
 
   return (
     <div ref={container} className="relative w-full font-sans text-text-primary selection:bg-brand selection:text-canvas overflow-x-hidden bg-canvas">
@@ -465,9 +465,10 @@ function App() {
         <Canvas 
           camera={{ position: [0, 0, 8], fov: 45 }}
           dpr={dpr}
-          gl={{ powerPreference: "high-performance", antialias: false, alpha: true }} 
+          gl={{ powerPreference: "high-performance", antialias: true, alpha: true }} 
         >
           <PerformanceMonitor onDecline={() => setDpr(1)} />
+          <Preload all />
           <Scene3D />
         </Canvas>
       </div>
