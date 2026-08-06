@@ -12,7 +12,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Canvas } from '@react-three/fiber';
-import { Environment, Float, RoundedBox, Text } from '@react-three/drei';
+import { Environment, Float, RoundedBox, Text, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
 import { 
   CreditCard, 
@@ -252,14 +252,12 @@ const Scene3D = memo(() => {
       ease: "power2.inOut",
       onUpdate: () => {
         // Instant model swap to completely prevent Z-fighting/glitching
-        if (perfectCardRef.current?.material) {
-          (perfectCardRef.current.material as any).opacity = proxy.swapOpacity > 0 ? 1 : 0;
+        if (perfectCardRef.current) {
           perfectCardRef.current.visible = proxy.swapOpacity > 0;
         }
         
         blockRefs.current.forEach(block => {
-          if (block?.material) {
-            (block.material as any).opacity = proxy.swapOpacity === 0 ? 1 : 0;
+          if (block) {
             block.visible = proxy.swapOpacity === 0;
           }
         });
@@ -287,6 +285,13 @@ const Scene3D = memo(() => {
 
     tl.to(groupRef.current.position, { y: 10, z: -10, duration: 2.5, ease: "power2.in" }, 7.5);
   });
+  const blockMaterial = React.useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: "#050505",
+    metalness: 0.9,
+    roughness: 0.1,
+    clearcoat: 1,
+    clearcoatRoughness: 0.1,
+  }), []);
 
   return (
     <>
@@ -306,8 +311,6 @@ const Scene3D = memo(() => {
               roughness={0.1} 
               clearcoat={1} 
               clearcoatRoughness={0.1}
-              transparent={true}
-              opacity={0} 
             />
           </RoundedBox>
 
@@ -319,17 +322,8 @@ const Scene3D = memo(() => {
               args={[blockW, blockH, 0.05]} 
               radius={0.03} 
               smoothness={2}
-            >
-              <meshPhysicalMaterial 
-                color="#050505" 
-                metalness={0.9} 
-                roughness={0.1} 
-                clearcoat={1} 
-                clearcoatRoughness={0.1} 
-                transparent={true}
-                opacity={1}
-              />
-            </RoundedBox>
+              material={blockMaterial}
+            />
           ))}
 
           {/* Gold EMV Chip */}
@@ -441,6 +435,7 @@ FaqSection.displayName = 'FaqSection';
 
 function App() {
   const container = useRef<HTMLDivElement>(null);
+  const [dpr, setDpr] = useState(1.5);
 
   // Setup GSAP for HTML text reveal in Hero
   useGSAP(() => {
@@ -464,17 +459,15 @@ function App() {
     <div ref={container} className="relative w-full font-sans text-text-primary selection:bg-brand selection:text-canvas overflow-x-hidden bg-canvas">
       
       {/* GLOBAL 3D BACKGROUND (Optimized Canvas) */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 z-0">
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand/10 rounded-full blur-[140px] mix-blend-screen will-change-transform" />
-           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/20 rounded-full blur-[120px] mix-blend-screen will-change-transform" />
-        </div>
-        
+      <div className="fixed inset-0 z-0 pointer-events-none" style={{
+        background: 'radial-gradient(circle at 50% 50%, rgba(213, 179, 112, 0.05) 0%, transparent 60%), radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 50%)'
+      }}>
         <Canvas 
           camera={{ position: [0, 0, 8], fov: 45 }}
-          dpr={[1, 1.5]}
+          dpr={dpr}
           gl={{ powerPreference: "high-performance", antialias: false, alpha: true }} 
         >
+          <PerformanceMonitor onDecline={() => setDpr(1)} />
           <Scene3D />
         </Canvas>
       </div>
