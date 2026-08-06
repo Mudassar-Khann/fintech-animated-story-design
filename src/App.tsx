@@ -251,17 +251,20 @@ const Scene3D = memo(() => {
       duration: 0.2, // Fast crossfade
       ease: "power2.inOut",
       onUpdate: () => {
-        // Fade in perfect card
+        // Instant model swap to completely prevent Z-fighting/glitching
         if (perfectCardRef.current?.material) {
-          (perfectCardRef.current.material as any).opacity = proxy.swapOpacity;
+          (perfectCardRef.current.material as any).opacity = proxy.swapOpacity > 0 ? 1 : 0;
+          perfectCardRef.current.visible = proxy.swapOpacity > 0;
         }
-        // Fade out grid pieces
+        
         blockRefs.current.forEach(block => {
           if (block?.material) {
-            (block.material as any).opacity = 1 - proxy.swapOpacity;
+            (block.material as any).opacity = proxy.swapOpacity === 0 ? 1 : 0;
+            block.visible = proxy.swapOpacity === 0;
           }
         });
-        // Fade in text
+        
+        // Fade in text smoothly
         layer3Ref.current?.children.forEach((child: any) => {
           if (child.material) {
             child.material.transparent = true;
