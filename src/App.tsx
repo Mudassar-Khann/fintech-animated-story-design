@@ -299,7 +299,7 @@ const Scene3D = memo(() => {
           {blocks.map((_, i) => (
             <RoundedBox 
               key={i} 
-              ref={(el) => (blockRefs.current[i] = el)} 
+              ref={(el) => { blockRefs.current[i] = el; }} 
               args={[blockW, blockH, 0.05]} 
               radius={0.03} 
               smoothness={2}
