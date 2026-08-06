@@ -212,7 +212,7 @@ const Scene3D = memo(() => {
 
     // PHASE 1: Hero Convergence
     tl.to([layer1Ref.current.position, layer2Ref.current.position, layer3Ref.current.position], {
-      x: 0, y: 0, z: (i) => (i === 0 ? -0.1 : i === 1 ? 0 : 0.1),
+      x: 0, y: 0, z: (i) => (i === 0 ? 0 : 0.026),
       duration: 1.5,
       ease: "power2.inOut"
     }, 0);
@@ -279,9 +279,15 @@ const Scene3D = memo(() => {
 
       <group ref={groupRef}>
         <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-          {/* Layer 1: Debit Card Body (Obsidian Matte) */}
+          {/* Layer 1: Debit Card Body (Obsidian Matte + Clearcoat) */}
           <RoundedBox ref={layer1Ref} args={[5.06, 3.18, 0.05]} radius={0.15} smoothness={4}>
-            <meshStandardMaterial color="#0B132B" roughness={0.7} metalness={0.3} />
+            <meshPhysicalMaterial 
+              color="#050505" 
+              metalness={0.9} 
+              roughness={0.1} 
+              clearcoat={1} 
+              clearcoatRoughness={0.1} 
+            />
           </RoundedBox>
 
           {/* Layer 2: Gold EMV Chip */}
@@ -292,19 +298,19 @@ const Scene3D = memo(() => {
           {/* Layer 3: Embossed Text & Details */}
           <group ref={layer3Ref}>
             {/* ONYX Logo */}
-            <Text position={[1.5, -1, 0.03]} fontSize={0.4} color="#D5B370" letterSpacing={0.2} fontStyle="italic" fontWeight="bold">
+            <Text position={[1.5, -0.9, 0.03]} fontSize={0.4} color="#ffffff" letterSpacing={0.3} fontStyle="italic" fontWeight="bold">
               ONYX
             </Text>
             {/* Card Number */}
-            <Text position={[-1.2, -0.2, 0.03]} fontSize={0.3} color="#D5B370" letterSpacing={0.1} material-roughness={0.2} material-metalness={0.8}>
+            <Text position={[-1.2, -0.2, 0.03]} fontSize={0.28} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9}>
               4123 8900 5678 9012
             </Text>
             {/* Expiry */}
-            <Text position={[-0.8, -0.6, 0.03]} fontSize={0.15} color="#A0ABC0" letterSpacing={0.05}>
+            <Text position={[-0.8, -0.6, 0.03]} fontSize={0.12} color="#A0ABC0" letterSpacing={0.1}>
               VALID THRU 12/28
             </Text>
             {/* Cardholder */}
-            <Text position={[-1.2, -1, 0.03]} fontSize={0.2} color="#D5B370" letterSpacing={0.05} material-roughness={0.2} material-metalness={0.8}>
+            <Text position={[-1.2, -0.9, 0.03]} fontSize={0.22} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9}>
               ALEXANDER WRIGHT
             </Text>
             {/* Payment Network */}
@@ -423,6 +429,7 @@ function App() {
         
         <Canvas 
           camera={{ position: [0, 0, 8], fov: 45 }}
+          dpr={[1, 1.5]}
           gl={{ powerPreference: "high-performance", antialias: false, alpha: true }} 
         >
           <Scene3D />
