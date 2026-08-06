@@ -12,7 +12,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Canvas } from '@react-three/fiber';
-import { Environment, Float, RoundedBox, MeshTransmissionMaterial } from '@react-three/drei';
+import { Environment, Float, RoundedBox, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { 
   CreditCard, 
@@ -182,7 +182,7 @@ const Scene3D = memo(() => {
   const groupRef = useRef<THREE.Group>(null);
   const layer1Ref = useRef<THREE.Mesh>(null); 
   const layer2Ref = useRef<THREE.Mesh>(null); 
-  const layer3Ref = useRef<THREE.Mesh>(null);
+  const layer3Ref = useRef<THREE.Group>(null);
 
   useGSAP(() => {
     if (!layer1Ref.current || !layer2Ref.current || !layer3Ref.current || !groupRef.current) return;
@@ -279,28 +279,39 @@ const Scene3D = memo(() => {
 
       <group ref={groupRef}>
         <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-          {/* Layer 1: Backplate (Obsidian) */}
-          <RoundedBox ref={layer1Ref} args={[3.375 * 1.5, 2.125 * 1.5, 0.05]} radius={0.1} smoothness={4}>
-            <meshStandardMaterial color="#111" roughness={0.2} metalness={0.8} />
+          {/* Layer 1: Debit Card Body (Obsidian Matte) */}
+          <RoundedBox ref={layer1Ref} args={[5.06, 3.18, 0.05]} radius={0.15} smoothness={4}>
+            <meshStandardMaterial color="#0B132B" roughness={0.7} metalness={0.3} />
           </RoundedBox>
 
-          {/* Layer 2: Circuit/Gold Core */}
-          <RoundedBox ref={layer2Ref} args={[3.2 * 1.5, 1.9 * 1.5, 0.02]} radius={0.08} smoothness={4}>
-            <meshStandardMaterial color="#D5B370" roughness={0.1} metalness={1} emissive="#D5B370" emissiveIntensity={0.2} />
+          {/* Layer 2: Gold EMV Chip */}
+          <RoundedBox ref={layer2Ref} args={[0.7, 0.5, 0.01]} radius={0.05} smoothness={2}>
+            <meshStandardMaterial color="#D5B370" roughness={0.2} metalness={1} />
           </RoundedBox>
 
-          {/* Layer 3: Front Glass Cover (Optimized) */}
-          <RoundedBox ref={layer3Ref} args={[3.375 * 1.5, 2.125 * 1.5, 0.08]} radius={0.1} smoothness={4}>
-            <MeshTransmissionMaterial 
-              backside 
-              thickness={0.1} 
-              roughness={0} 
-              transmission={1} 
-              ior={1.5} 
-              chromaticAberration={0.02} 
-              anisotropy={0.1}
-            />
-          </RoundedBox>
+          {/* Layer 3: Embossed Text & Details */}
+          <group ref={layer3Ref}>
+            {/* ONYX Logo */}
+            <Text position={[1.5, -1, 0.03]} fontSize={0.4} color="#D5B370" letterSpacing={0.2} fontStyle="italic" fontWeight="bold">
+              ONYX
+            </Text>
+            {/* Card Number */}
+            <Text position={[-1.2, -0.2, 0.03]} fontSize={0.3} color="#D5B370" letterSpacing={0.1} material-roughness={0.2} material-metalness={0.8}>
+              4123 8900 5678 9012
+            </Text>
+            {/* Expiry */}
+            <Text position={[-0.8, -0.6, 0.03]} fontSize={0.15} color="#A0ABC0" letterSpacing={0.05}>
+              VALID THRU 12/28
+            </Text>
+            {/* Cardholder */}
+            <Text position={[-1.2, -1, 0.03]} fontSize={0.2} color="#D5B370" letterSpacing={0.05} material-roughness={0.2} material-metalness={0.8}>
+              ALEXANDER WRIGHT
+            </Text>
+            {/* Payment Network */}
+            <Text position={[1.6, 1.1, 0.03]} fontSize={0.35} color="#A0ABC0" fontStyle="italic" fontWeight="bold">
+              VISA
+            </Text>
+          </group>
         </Float>
       </group>
     </>
