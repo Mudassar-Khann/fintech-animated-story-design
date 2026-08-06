@@ -36,10 +36,10 @@ Rendering a fullscreen `MeshTransmissionMaterial` is computationally expensive. 
 ## Screenshots
 
 ### The Hero Sequence
-![Hero Sequence](./public/screenshots/hero.jpg)
+![Hero Sequence](./public/screenshots/hero.png)
 
 ### Feature Refraction
 ![Features Grid](./public/screenshots/features.png)
 
 ### Pricing & Materials
-![Pricing Tiers](./public/screenshots/pricing.jpg)
+![Pricing Tiers](./public/screenshots/pricing.png)
