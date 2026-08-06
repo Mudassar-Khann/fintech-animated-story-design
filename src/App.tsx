@@ -592,14 +592,8 @@ function App() {
                 <p className="text-lg text-text-secondary drop-shadow-md">Legacy banks were built for a different era. Onyx is engineered for speed, transparency, and global scale.</p>
               </motion.div>
               
-              <motion.div 
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-100px" }}
-                variants={staggerConfig}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
-              >
-                <ParallaxCard className="md:col-span-2 min-h-[320px] bg-surface/30 backdrop-blur-xl rounded-3xl p-10 border border-white/5 flex flex-col justify-between shadow-lg">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <div className="md:col-span-2 min-h-[320px] bg-surface/30 backdrop-blur-xl rounded-3xl p-10 border border-white/5 flex flex-col justify-between shadow-lg">
                   <div className="w-14 h-14 bg-canvas/50 backdrop-blur-md rounded-2xl border border-white/10 flex items-center justify-center mb-8 relative z-10 shadow-[0_0_15px_rgba(213,179,112,0.15)]">
                     <CreditCard className="w-7 h-7 text-brand" />
                   </div>
@@ -607,9 +601,9 @@ function App() {
                     <h3 className="text-2xl font-display font-bold mb-3 text-white">Unlimited Virtual Cards</h3>
                     <p className="text-text-secondary text-lg leading-relaxed max-w-md">Instantly issue unique virtual cards for every software subscription, vendor, and employee expense. Set hard limits and cancel anytime.</p>
                   </div>
-                </ParallaxCard>
+                </div>
 
-                <ParallaxCard className="min-h-[320px] bg-surface/30 backdrop-blur-xl rounded-3xl p-10 border border-white/5 flex flex-col justify-between shadow-lg">
+                <div className="min-h-[320px] bg-surface/30 backdrop-blur-xl rounded-3xl p-10 border border-white/5 flex flex-col justify-between shadow-lg">
                   <div className="w-14 h-14 bg-canvas/50 backdrop-blur-md rounded-2xl border border-white/10 flex items-center justify-center mb-8 relative z-10 shadow-[0_0_15px_rgba(213,179,112,0.15)]">
                     <Wallet className="w-7 h-7 text-brand" />
                   </div>
@@ -617,9 +611,9 @@ function App() {
                     <h3 className="text-2xl font-display font-bold mb-3 text-white">Zero Hidden Fees</h3>
                     <p className="text-text-secondary text-lg leading-relaxed">No wire fees. No FX markup. Absolute transparency on every transaction.</p>
                   </div>
-                </ParallaxCard>
+                </div>
 
-                <ParallaxCard className="min-h-[320px] bg-surface/30 backdrop-blur-xl rounded-3xl p-10 border border-white/5 flex flex-col justify-between shadow-lg">
+                <div className="min-h-[320px] bg-surface/30 backdrop-blur-xl rounded-3xl p-10 border border-white/5 flex flex-col justify-between shadow-lg">
                   <div className="w-14 h-14 bg-canvas/50 backdrop-blur-md rounded-2xl border border-white/10 flex items-center justify-center mb-8 relative z-10 shadow-[0_0_15px_rgba(213,179,112,0.15)]">
                     <Globe2 className="w-7 h-7 text-brand" />
                   </div>
@@ -627,8 +621,8 @@ function App() {
                     <h3 className="text-2xl font-display font-bold mb-3 text-white">Global Reach</h3>
                     <p className="text-text-secondary text-lg leading-relaxed">Hold balances in 30+ currencies and pay vendors across 150 countries instantly.</p>
                   </div>
-                </ParallaxCard>
-              </motion.div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -647,14 +641,8 @@ function App() {
               <p className="text-lg text-text-secondary drop-shadow-md">Start for free, upgrade when you need to scale.</p>
             </motion.div>
             
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={staggerConfig}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl"
-            >
-              <motion.div variants={fadeUp} className="rounded-3xl p-8 bg-surface/20 backdrop-blur-2xl border border-white/5 flex flex-col relative shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
+              <div className="rounded-3xl p-8 bg-surface/20 backdrop-blur-2xl border border-white/5 flex flex-col relative shadow-lg">
                 <h3 className="text-xl font-bold mb-2 text-white">Starter</h3>
                 <div className="text-4xl font-display font-bold mb-2 text-brand">$0<span className="text-lg text-text-secondary font-sans font-normal">/mo</span></div>
                 <p className="text-text-secondary mb-8 text-sm">Perfect for founders and early-stage startups.</p>
@@ -674,9 +662,9 @@ function App() {
                 >
                   Get Started
                 </motion.button>
-              </motion.div>
+              </div>
 
-              <motion.div variants={fadeUp} className="rounded-3xl p-8 bg-surface/40 backdrop-blur-3xl border border-brand/30 flex flex-col relative shadow-[0_0_50px_rgba(213,179,112,0.15)] md:-translate-y-4 z-10">
+              <div className="rounded-3xl p-8 bg-surface/40 backdrop-blur-3xl border border-brand/30 flex flex-col relative shadow-[0_0_50px_rgba(213,179,112,0.15)] md:-mt-4 z-10">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-brand text-canvas text-xs font-bold rounded-full uppercase tracking-widest shadow-lg">Most Popular</div>
                 <h3 className="text-xl font-bold mb-2 text-white">Growth</h3>
                 <div className="text-4xl font-display font-bold mb-2 text-brand">$49<span className="text-lg text-text-secondary font-sans font-normal">/mo</span></div>
@@ -697,9 +685,9 @@ function App() {
                 >
                   Start Free Trial
                 </motion.button>
-              </motion.div>
+              </div>
 
-              <motion.div variants={fadeUp} className="rounded-3xl p-8 bg-surface/20 backdrop-blur-2xl border border-white/5 flex flex-col relative shadow-lg">
+              <div className="rounded-3xl p-8 bg-surface/20 backdrop-blur-2xl border border-white/5 flex flex-col relative shadow-lg">
                 <h3 className="text-xl font-bold mb-2 text-white">Enterprise</h3>
                 <div className="text-4xl font-display font-bold mb-2 text-brand">Custom</div>
                 <p className="text-text-secondary mb-8 text-sm">For companies with complex financial operations.</p>
@@ -719,8 +707,8 @@ function App() {
                 >
                   Contact Sales
                 </motion.button>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
         </section>
 
