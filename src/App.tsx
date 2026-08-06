@@ -209,7 +209,7 @@ const Scene3D = memo(() => {
     // 1. INITIAL SETTINGS
     gsap.set(layer2Ref.current.position, { z: -10, x: 10, y: -10 });
     gsap.set(layer2Ref.current.rotation, { x: -1, y: 1 });
-    gsap.set(layer3Ref.current.position, { z: 0.026, x: 0, y: 0 }); 
+    gsap.set(layer3Ref.current.position, { z: 0.035, x: 0, y: 0 }); 
 
     gsap.set(groupRef.current.rotation, { y: Math.PI / 3, x: Math.PI / 6 });
     gsap.set(groupRef.current.position, { z: -5 });
@@ -241,7 +241,7 @@ const Scene3D = memo(() => {
     });
 
     // 3. CHIP CONVERGENCE
-    tl.to(layer2Ref.current.position, { x: -1.7, y: 0.8, z: 0.026, duration: 1.5, ease: "power2.inOut" }, 0);
+    tl.to(layer2Ref.current.position, { x: -1.7, y: 0.8, z: 0.035, duration: 1.5, ease: "power2.inOut" }, 0);
     tl.to(layer2Ref.current.rotation, { x: 0, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" }, 0);
 
     // 4. THE VFX MODEL SWAP & TEXT REVEAL
