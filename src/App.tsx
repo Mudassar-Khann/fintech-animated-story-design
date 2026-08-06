@@ -182,6 +182,7 @@ const Scene3D = memo(() => {
   const groupRef = useRef<THREE.Group>(null);
   const layer2Ref = useRef<THREE.Mesh>(null); // Chip
   const layer3Ref = useRef<THREE.Group>(null); // Text
+  const perfectCardRef = useRef<THREE.Mesh>(null); // Perfect Seamless Card
   const blockRefs = useRef<(THREE.Mesh | null)[]>([]);
 
   const gridCols = 6;
@@ -193,7 +194,7 @@ const Scene3D = memo(() => {
   const blocks = Array.from({ length: 24 });
 
   useGSAP(() => {
-    if (!layer2Ref.current || !layer3Ref.current || !groupRef.current) return;
+    if (!layer2Ref.current || !layer3Ref.current || !groupRef.current || !perfectCardRef.current) return;
 
     // GSAP Scroll Timeline
     const tl = gsap.timeline({
@@ -205,7 +206,7 @@ const Scene3D = memo(() => {
       }
     });
 
-    // 1. CHIP & TEXT INITIAL SETTINGS
+    // 1. INITIAL SETTINGS
     gsap.set(layer2Ref.current.position, { z: -10, x: 10, y: -10 });
     gsap.set(layer2Ref.current.rotation, { x: -1, y: 1 });
     gsap.set(layer3Ref.current.position, { z: 0.026, x: 0, y: 0 }); 
@@ -235,53 +236,52 @@ const Scene3D = memo(() => {
       const targetX = (col * blockW) - (cardWidth / 2) + (blockW / 2);
       const targetY = -(row * blockH) + (cardHeight / 2) - (blockH / 2);
 
-      tl.to(block.position, {
-        x: targetX, y: targetY, z: 0,
-        duration: 1.5,
-        ease: "power2.inOut"
-      }, 0);
-      
-      tl.to(block.rotation, {
-        x: 0, y: 0, z: 0,
-        duration: 1.5,
-        ease: "power2.inOut"
-      }, 0);
+      tl.to(block.position, { x: targetX, y: targetY, z: 0, duration: 1.5, ease: "power2.inOut" }, 0);
+      tl.to(block.rotation, { x: 0, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" }, 0);
     });
 
     // 3. CHIP CONVERGENCE
-    tl.to(layer2Ref.current.position, { x: -1.5, y: 0, z: 0.026, duration: 1.5, ease: "power2.inOut" }, 0);
+    tl.to(layer2Ref.current.position, { x: -1.7, y: 0.8, z: 0.026, duration: 1.5, ease: "power2.inOut" }, 0);
     tl.to(layer2Ref.current.rotation, { x: 0, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" }, 0);
 
-    // 4. TEXT REVEAL ON SNAP
-    let proxy = { textOpacity: 0 };
+    // 4. THE VFX MODEL SWAP & TEXT REVEAL
+    let proxy = { swapOpacity: 0 };
     tl.to(proxy, {
-      textOpacity: 1,
-      duration: 0.5,
+      swapOpacity: 1,
+      duration: 0.2, // Fast crossfade
       ease: "power2.inOut",
       onUpdate: () => {
+        // Fade in perfect card
+        if (perfectCardRef.current?.material) {
+          (perfectCardRef.current.material as any).opacity = proxy.swapOpacity;
+        }
+        // Fade out grid pieces
+        blockRefs.current.forEach(block => {
+          if (block?.material) {
+            (block.material as any).opacity = 1 - proxy.swapOpacity;
+          }
+        });
+        // Fade in text
         layer3Ref.current?.children.forEach((child: any) => {
           if (child.material) {
             child.material.transparent = true;
-            child.material.opacity = proxy.textOpacity;
-            child.fillOpacity = proxy.textOpacity;
+            child.material.opacity = proxy.swapOpacity;
+            child.fillOpacity = proxy.swapOpacity;
           }
         });
       }
-    }, 1.5);
+    }, 1.5); // Happens exactly as fragments snap
 
-    // 5. GLOBAL GROUP ANIMATIONS (Moving the assembled card through the story)
+    // 5. GLOBAL GROUP ANIMATIONS
     tl.to(groupRef.current.position, { z: 0, y: 1.5, x: 0, duration: 1.5, ease: "power2.inOut" }, 0);
     tl.to(groupRef.current.rotation, { y: 0, x: 0.2, z: 0, duration: 1.5, ease: "power2.inOut" }, 0);
 
-    // PHASE 2: Features Section
     tl.to(groupRef.current.position, { x: 3, y: 0, z: -1, duration: 3, ease: "none" }, 1.5);
     tl.to(groupRef.current.rotation, { y: -Math.PI / 6, x: 0.1, z: -0.1, duration: 3, ease: "none" }, 1.5);
 
-    // PHASE 3: Pricing Section
     tl.to(groupRef.current.position, { x: 0, y: -2, z: -2, duration: 3, ease: "power1.inOut" }, 4.5);
     tl.to(groupRef.current.rotation, { y: 0, x: -0.4, z: 0, duration: 3, ease: "power1.inOut" }, 4.5);
 
-    // PHASE 4: FAQ / Footer
     tl.to(groupRef.current.position, { y: 10, z: -10, duration: 2.5, ease: "power2.in" }, 7.5);
   });
 
@@ -295,7 +295,20 @@ const Scene3D = memo(() => {
       <group ref={groupRef}>
         <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
           
-          {/* 24-Piece Obsidian Grid */}
+          {/* THE SEAMLESS CARD (Fades in at exactly 1.5s) */}
+          <RoundedBox ref={perfectCardRef} args={[cardWidth, cardHeight, 0.05]} radius={0.15} smoothness={4}>
+            <meshPhysicalMaterial 
+              color="#050505" 
+              metalness={0.9} 
+              roughness={0.1} 
+              clearcoat={1} 
+              clearcoatRoughness={0.1}
+              transparent={true}
+              opacity={0} 
+            />
+          </RoundedBox>
+
+          {/* 24-Piece Obsidian Grid (Fades out at exactly 1.5s) */}
           {blocks.map((_, i) => (
             <RoundedBox 
               key={i} 
@@ -310,6 +323,8 @@ const Scene3D = memo(() => {
                 roughness={0.1} 
                 clearcoat={1} 
                 clearcoatRoughness={0.1} 
+                transparent={true}
+                opacity={1}
               />
             </RoundedBox>
           ))}
@@ -319,24 +334,30 @@ const Scene3D = memo(() => {
             <meshStandardMaterial color="#D5B370" roughness={0.2} metalness={1} />
           </RoundedBox>
 
-          {/* Embossed Text & Details */}
+          {/* Perfectly Aligned Text Group */}
           <group ref={layer3Ref}>
-            <Text position={[1.5, -0.9, 0]} fontSize={0.4} color="#ffffff" letterSpacing={0.3} fontStyle="italic" fontWeight="bold" fillOpacity={0}>
+            {/* ONYX Logo (Top Right) */}
+            <Text position={[2.23, 1.29, 0]} anchorX="right" anchorY="top" fontSize={0.4} color="#ffffff" letterSpacing={0.3} fontStyle="italic" fontWeight="bold" fillOpacity={0}>
               ONYX
             </Text>
-            <Text position={[-1.2, -0.2, 0]} fontSize={0.28} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9} fillOpacity={0}>
+            {/* Card Number (Center Left) */}
+            <Text position={[-2.23, 0.2, 0]} anchorX="left" anchorY="middle" fontSize={0.28} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9} fillOpacity={0}>
               4123 8900 5678 9012
             </Text>
-            <Text position={[-0.8, -0.6, 0]} fontSize={0.12} color="#A0ABC0" letterSpacing={0.1} fillOpacity={0}>
+            {/* Expiry (Bottom Left, above name) */}
+            <Text position={[-2.23, -0.8, 0]} anchorX="left" anchorY="bottom" fontSize={0.12} color="#A0ABC0" letterSpacing={0.1} fillOpacity={0}>
               VALID THRU 12/28
             </Text>
-            <Text position={[-1.2, -0.9, 0]} fontSize={0.22} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9} fillOpacity={0}>
+            {/* Cardholder Name (Bottom Left) */}
+            <Text position={[-2.23, -1.29, 0]} anchorX="left" anchorY="bottom" fontSize={0.22} color="#D5B370" letterSpacing={0.15} material-roughness={0.1} material-metalness={0.9} fillOpacity={0}>
               ALEXANDER WRIGHT
             </Text>
-            <Text position={[1.6, 1.1, 0]} fontSize={0.35} color="#A0ABC0" fontStyle="italic" fontWeight="bold" fillOpacity={0}>
+            {/* VISA Logo (Bottom Right) */}
+            <Text position={[2.23, -1.29, 0]} anchorX="right" anchorY="bottom" fontSize={0.35} color="#A0ABC0" fontStyle="italic" fontWeight="bold" fillOpacity={0}>
               VISA
             </Text>
           </group>
+
         </Float>
       </group>
     </>
